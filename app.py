@@ -44,16 +44,6 @@ st.markdown("""
 # =============================
 # GOOGLE SHEETS CONNECTION
 # =============================
-# Recommended: store your Google Sheet URL in Streamlit secrets:
-# .streamlit/secrets.toml for local use OR Streamlit Cloud > App > Settings > Secrets
-#
-# [connections.gsheets]
-# spreadsheet = "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/edit?usp=sharing"
-#
-# If your sheet has multiple tabs, set WORKSHEET_NAME below to the exact tab name.
-# For Google Forms, this is often "Form responses 1".
-WORKSHEET_NAME = "Form responses 1"
-
 @st.cache_data(ttl=60)
 def clean_columns(df):
     """Clean columns and rename repeated / long survey columns."""
@@ -104,16 +94,9 @@ def load_data_from_gsheets():
 
     # Option A: recommended, spreadsheet URL is stored in Streamlit secrets.
     # conn.read() will use [connections.gsheets].spreadsheet from secrets.
-    try:
-        df = conn.read(worksheet=WORKSHEET_NAME, ttl=60)
-    except Exception:
-        # Option B fallback: paste the public Google Sheet URL in Streamlit secrets as SHEET_URL.
-        # This keeps the URL out of your GitHub code.
-        sheet_url = st.secrets.get("SHEET_URL", None)
-        if not sheet_url:
-            raise
-        df = conn.read(spreadsheet=sheet_url, worksheet=WORKSHEET_NAME, ttl=60)
-
+    
+    df = conn.read(ttl=60)
+    
     df = df.dropna(how="all")
     return clean_columns(df)
 
