@@ -93,8 +93,7 @@ def load_data_from_gsheets():
     """Read live Google Forms responses from Google Sheets using st-gsheets-connection."""
     conn = st.connection("gsheets", type=GSheetsConnection)
 
-    try:
-        df = conn.read(ttl=60)
+    df = conn.read(ttl=60)
 
     df = df.dropna(how="all")
     return clean_columns(df)
